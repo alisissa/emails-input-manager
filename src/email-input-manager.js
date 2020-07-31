@@ -39,6 +39,9 @@ const EmailInputManager = (container, options) => {
 
       let spanEmail = document.createElement('span')
       spanEmail.innerHTML = email;
+      if (!isEmailValid(email)) {
+        spanEmail.className = 'container_input-area_email-block_error';
+      }
       emailBlock.appendChild(spanEmail);
 
       let spanDelete = document.createElement('span')
@@ -73,7 +76,7 @@ const EmailInputManager = (container, options) => {
 
     // count valid emails
     btnCountEmails.onclick = () => {
-      alert('Valid emails count: ' + emailsList.length);
+      alert('Valid emails count: ' + emailsList.filter(email => isEmailValid(email)).length);
     };
 
     inputEmail.addEventListener('blur', (event) => {
@@ -83,7 +86,7 @@ const EmailInputManager = (container, options) => {
     });
 
     inputEmail.addEventListener('keydown', (event) => {
-      if (event.which === 13 || event.which === 44) {
+      if (event.keyCode === 13 || event.keyCode === 188) {
         const inputVal = event.target.value;
         handleEmailInput(inputVal);
         event.target.value = '';
@@ -104,6 +107,11 @@ const EmailInputManager = (container, options) => {
       const blockIndex = emailBlock.dataset.indexNumber;
       emailsList.splice(blockIndex, 1);
       emailsContainer.removeChild(emailBlock);
+    }
+
+    const isEmailValid = (email) => {
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
     }
 
   }
