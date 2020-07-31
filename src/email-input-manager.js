@@ -35,6 +35,7 @@ const EmailInputManager = (container, options) => {
     const createEmailBlock = email => {
       let emailBlock = document.createElement('div');
       emailBlock.className = 'container_input-area_email-block'
+      emailBlock.dataset.indexNumber = emailsList.length;
 
       let spanEmail = document.createElement('span')
       spanEmail.innerHTML = email;
@@ -42,6 +43,7 @@ const EmailInputManager = (container, options) => {
 
       let spanDelete = document.createElement('span')
       spanDelete.className = 'container_input-area_email-delete';
+
       emailBlock.appendChild(spanDelete);
 
       return emailBlock;
@@ -65,10 +67,34 @@ const EmailInputManager = (container, options) => {
       return Math.random().toString(36).substring(7) + randomDomain;
     };
 
-    // 
+    // count valid emails
     btnCountEmails.onclick = () => {
       alert('Valid emails count: ' + emailsList.length);
     };
+
+    inputEmail.addEventListener('blur', (event) => {
+      const inputVal = event.target.value;
+      handleEmailInput(inputVal);
+      event.target.value = '';
+    });
+
+    inputEmail.addEventListener('keydown', (event) => {
+      if (event.which === 13 || event.which === 44) {
+        const inputVal = event.target.value;
+        handleEmailInput(inputVal);
+        event.target.value = '';
+      }
+    });
+
+    const handleEmailInput = (value) => {
+      const emails = value.split(',')
+      for (let i = 0; i < emails.length; i++) {
+        if (emails[i].length > 0) {
+          emailsContainer.insertBefore(createEmailBlock(emails[i]), inputEmail);
+          emailsList.push(emails[i]);
+        }
+      }
+    }
   }
 };
 

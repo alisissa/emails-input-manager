@@ -41,7 +41,8 @@ $darkGray: #C3C2CF;
       align-content: flex-start;
       flex-wrap: wrap;
       width: 100%;
-      min-height: 200px;
+      height: 200px;
+      overflow: scroll;
       border: 1px solid $darkGray;
       box-sizing: border-box;
       border-radius: 4px;
@@ -71,6 +72,9 @@ $darkGray: #C3C2CF;
         line-height: 24px;
         font-size: 14px;
         margin-right: 12px;
+      }
+      &_error {
+        border-bottom: 1px dashed #D92929;
       }
     }
 
