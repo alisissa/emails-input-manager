@@ -35,3 +35,4 @@ input field.
 - "Get emails count" button shows an alert with valid emails count.
 - You can create several EmailInputManagers on the same page.
 - Title can be set through options
+- Library is compatible with IE 11 and the latest versions of Chrome, Safari, Firefox and Edge.
