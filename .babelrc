@@ -1,0 +1,23 @@
+{
+  "ignore": [
+    "/\/core-js/",
+    "/@babel\b/"
+  ],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "entry",
+        "targets": {
+          "browsers": "> 1%, IE 11, not dead"
+        }
+      }
+    ]
+  ],
+  "overrides": [
+    {
+      "test": "./node_modules",
+      "sourceType": "unambiguous"
+    }
+  ],
+}
