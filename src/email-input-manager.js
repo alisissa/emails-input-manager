@@ -44,6 +44,10 @@ const EmailInputManager = (container, options) => {
       let spanDelete = document.createElement('span')
       spanDelete.className = 'container_input-area_email-delete';
 
+      spanDelete.addEventListener('click', function () {
+        removeEmail(this.parentNode);
+      });
+
       emailBlock.appendChild(spanDelete);
 
       return emailBlock;
@@ -95,6 +99,13 @@ const EmailInputManager = (container, options) => {
         }
       }
     }
+
+    const removeEmail = (emailBlock) => {
+      const blockIndex = emailBlock.dataset.indexNumber;
+      emailsList.splice(blockIndex, 1);
+      emailsContainer.removeChild(emailBlock);
+    }
+
   }
 };
 
