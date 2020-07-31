@@ -2,7 +2,7 @@ require('../src/styles.scss');
 
 "use strict";
 
-const EmailInputManager = (container, options) => {
+function EmailInputManager(container, options) {
   // check if element exists
   if (document.getElementById(container)) {
     // check if options exist 
@@ -10,32 +10,117 @@ const EmailInputManager = (container, options) => {
     if (options) {
       title = options.title ? options.title : title;
     }
-    // generate the main container html
-    document.getElementById(container).innerHTML = `<div class="container">
-    <div class="container_input-area">
-      <div class="container_input-area_title">Share <strong>` + title + `</strong> with others</div>
-      <div id="emailsContainer" class="container_input-area_content">
-        <input id="inputEmail" type="text" placeholder="add more people…" />
-      </div>
-    </div>
-    <div class="container_actions">
-      <button id="btnAddEmail">Add email</button>
-      <button id="btnCountEmails">Get emails count</button>
-    </div>
-  </div>`;
 
-    // get main controls
-    const emailsContainer = document.getElementById('emailsContainer');
-    const inputEmail = document.getElementById('inputEmail');
-    const btnAddEmail = document.getElementById('btnAddEmail');
-    const btnCountEmails = document.getElementById('btnCountEmails');
-
+    // emailsList to count emails and check their validity
     let emailsList = [];
 
-    const createEmailBlock = email => {
+    // create container
+    const containerDiv = document.createElement('div');
+    containerDiv.className = 'container';
+
+    // create input area
+    const inputAreaDiv = document.createElement('div');
+    inputAreaDiv.className = 'container_input-area';
+
+    // create title section
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'container_input-area_title';
+    titleDiv.innerHTML = `Share <strong>` + title + `</strong> with others`;
+
+    // create emails block
+    const emailsBlock = document.createElement('div');
+    emailsBlock.className = 'container_input-area_content';
+    // create input 
+    const inputEmail = document.createElement('input');
+    inputEmail.setAttribute('type', 'text');
+    inputEmail.placeholder = 'add more people…';
+
+    // add inputEmail event listeners
+    inputEmail.addEventListener('blur', () => {
+      const inputVal = inputEmail.value;
+      handleEmailInput(inputVal);
+    });
+
+    inputEmail.addEventListener('keyup', (event) => {
+      if (event.keyCode === 13 || event.keyCode === 188) {
+        const inputVal = inputEmail.value;
+        handleEmailInput(inputVal);
+      }
+    });
+
+    // handle paste emails to inout
+    // inputEmail.addEventListener('input', () => {
+    //   const inputVal = inputEmail.value;
+    //   handleEmailInput(inputVal);
+    //   inputEmail.value = '';
+    // });
+
+    inputEmail.onpaste = (event) => {
+      let clipboardData = '';
+      if (typeof event.clipboardData === 'undefined') {
+        clipboardData = window.clipboardData.getData('Text');
+      } else {
+        clipboardData = event.clipboardData.getData('text/plain');
+      }
+      setTimeout(() => {
+        handleEmailInput(clipboardData);
+      }, 0)
+    }
+
+    const handleEmailInput = (value) => {
+      const emails = value.split(',')
+      for (let i = 0; i < emails.length; i++) {
+        if (emails[i].length > 0) {
+          const uniqueId = new Date().getTime();
+          emailsBlock.insertBefore(createEmailBlock(emails[i], uniqueId), inputEmail);
+          emailsList.push({ id: uniqueId, email: emails[i] });
+        }
+      }
+      inputEmail.value = '';
+    }
+
+    // append the input to the emailBlock section
+    emailsBlock.appendChild(inputEmail);
+
+    // append elements to inputAreaDiv
+    inputAreaDiv.appendChild(titleDiv);
+    inputAreaDiv.appendChild(emailsBlock);
+
+
+    // create actions area
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'container_actions';
+
+    // create add email button
+    let btnAddEmail = document.createElement("button");
+    btnAddEmail.innerHTML = "Add email";
+    actionsDiv.appendChild(btnAddEmail)
+    btnAddEmail.onclick = () => {
+      const randomEmail = generateRandomEmail();
+      const uniqueId = new Date().getTime();
+      emailsBlock.insertBefore(createEmailBlock(randomEmail, uniqueId), inputEmail);
+      emailsList.push({ id: uniqueId, email: randomEmail });
+    };
+
+    // create valid emails count button
+    let btnCountValidEmails = document.createElement("button");
+    btnCountValidEmails.innerHTML = "Get emails count";
+    actionsDiv.appendChild(btnCountValidEmails);
+    btnCountValidEmails.onclick = () => {
+      alert('Valid emails count: ' + emailsList.filter(item => isEmailValid(item.email)).length);
+    };
+
+    // append areas to container
+    containerDiv.appendChild(inputAreaDiv);
+    containerDiv.appendChild(actionsDiv);
+
+    // add input area and actions to container
+    document.getElementById(container).appendChild(containerDiv);
+
+    const createEmailBlock = (email, uniqueId) => {
       let emailBlock = document.createElement('div');
       emailBlock.className = 'container_input-area_email-block'
-      emailBlock.dataset.indexNumber = emailsList.length;
+      emailBlock.dataset.uniqueId = uniqueId;
 
       let spanEmail = document.createElement('span')
       spanEmail.innerHTML = email;
@@ -52,19 +137,11 @@ const EmailInputManager = (container, options) => {
       });
 
       emailBlock.appendChild(spanDelete);
-
       return emailBlock;
     };
 
-    // add random email
-    btnAddEmail.onclick = () => {
-      const randomEmail = generateRandomEmail();
-      emailsContainer.insertBefore(createEmailBlock(randomEmail), inputEmail);
-      emailsList.push(randomEmail);
-    };
-
     // generate random email
-    function generateRandomEmail() {
+    const generateRandomEmail = () => {
       const domains = [
         '@gmail.com',
         '@miro.com',
@@ -74,39 +151,11 @@ const EmailInputManager = (container, options) => {
       return Math.random().toString(36).substring(7) + randomDomain;
     };
 
-    // count valid emails
-    btnCountEmails.onclick = () => {
-      alert('Valid emails count: ' + emailsList.filter(email => isEmailValid(email)).length);
-    };
-
-    inputEmail.addEventListener('blur', (event) => {
-      const inputVal = event.target.value;
-      handleEmailInput(inputVal);
-      event.target.value = '';
-    });
-
-    inputEmail.addEventListener('keydown', (event) => {
-      if (event.keyCode === 13 || event.keyCode === 188) {
-        const inputVal = event.target.value;
-        handleEmailInput(inputVal);
-        event.target.value = '';
-      }
-    });
-
-    const handleEmailInput = (value) => {
-      const emails = value.split(',')
-      for (let i = 0; i < emails.length; i++) {
-        if (emails[i].length > 0) {
-          emailsContainer.insertBefore(createEmailBlock(emails[i]), inputEmail);
-          emailsList.push(emails[i]);
-        }
-      }
-    }
-
+    // remove email from emailsBlock and emailList by index
     const removeEmail = (emailBlock) => {
-      const blockIndex = emailBlock.dataset.indexNumber;
-      emailsList.splice(blockIndex, 1);
-      emailsContainer.removeChild(emailBlock);
+      const uniqueId = emailBlock.dataset.uniqueId;
+      emailsList = emailsList.filter(item => item.id !== parseInt(uniqueId));
+      emailsBlock.removeChild(emailBlock);
     }
 
     const isEmailValid = (email) => {

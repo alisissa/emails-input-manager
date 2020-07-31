@@ -30,8 +30,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].min.css",
-      chunkFilename: "[id].min.css"
+      filename: "email-input-manager.min.css"
     })
   ]
 };

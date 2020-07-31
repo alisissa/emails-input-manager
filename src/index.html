@@ -6,15 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Email Input Manager</title>
-  <link rel="stylesheet" href="../dist/main.min.css">
+  <link rel="stylesheet" href="../dist/email-input-manager.min.css">
 </head>
 
 <body>
   <div id="emails-container-1"></div>
+  <div id="emails-container-2"></div>
   <script src="../dist/email-input-manager.js"></script>
   <script>
     EmailInputManager('emails-container-1', {
       title: 'My Board Name'
+    });
+
+    EmailInputManager('emails-container-2', {
+      title: 'My 2nd Board Name'
     });
   </script>
 </body>
